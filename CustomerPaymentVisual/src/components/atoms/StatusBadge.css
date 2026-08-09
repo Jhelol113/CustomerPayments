@@ -1,0 +1,25 @@
+.atm-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.atm-status--success {
+  background-color: var(--success-bg);
+  color: var(--success);
+}
+
+.atm-status--warning {
+  background-color: var(--warning-bg);
+  color: var(--warning);
+}
+
+.atm-status--default {
+  background-color: rgba(148, 163, 184, 0.15); /* text-secondary base */
+  color: var(--text-secondary);
+}

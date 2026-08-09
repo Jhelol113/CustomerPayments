@@ -1,0 +1,89 @@
+.atm-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: inherit;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  border-radius: var(--radius-md);
+  outline: none;
+}
+
+.atm-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.atm-button--full-width {
+  width: 100%;
+}
+
+.atm-button--md {
+  padding: 12px 20px;
+  font-size: 1rem;
+}
+
+.atm-button--sm {
+  padding: 8px 16px;
+  font-size: 0.875rem;
+}
+
+/* Variantes */
+.atm-button--primary {
+  background: var(--accent-gradient);
+  color: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.atm-button--primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-glow);
+  transform: translateY(-2px);
+}
+
+.atm-button--secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.atm-button--secondary:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+}
+
+.atm-button--danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.atm-button--danger:hover:not(:disabled) {
+  background: #dc2626; /* Un rojo más oscuro para hover */
+}
+
+.atm-button--ghost {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+.atm-button--ghost:hover:not(:disabled) {
+  color: var(--accent-hover);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.atm-button--icon {
+  padding: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.atm-button--icon:hover:not(:disabled) {
+  background: var(--bg-card-hover);
+  color: var(--accent-hover);
+}

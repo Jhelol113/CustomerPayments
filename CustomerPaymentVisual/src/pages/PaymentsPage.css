@@ -1,0 +1,16 @@
+/* Reutiliza estilos de CustomersPage.css pero si es necesario se pueden agregar específicos aquí */
+.filters-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.filter-select {
+  padding: 10px 16px;
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #f8fafc;
+  outline: none;
+  min-width: 200px;
+}
