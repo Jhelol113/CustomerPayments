@@ -22,7 +22,7 @@ services:
       dockerfile: Dockerfile
     container_name: customer_payment_api
     ports:
-      - "5041:8080"
+      - "5263:8080"
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=customer_payment_db;User=root;Password=rootpassword123;
     depends_on:
