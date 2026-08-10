@@ -14,6 +14,11 @@ services:
       - db_data:/var/lib/mysql
       # Autoejecuta los scripts SQL al iniciar el contenedor por primera vez
       - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword123"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
 
   # Backend .NET API
   api:
@@ -26,7 +31,8 @@ services:
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Port=3306;Database=customer_payment_db;User=root;Password=rootpassword123;
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   # Frontend React (Vite)
   frontend:
