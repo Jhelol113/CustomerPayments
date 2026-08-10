@@ -1,7 +1,7 @@
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// TUTOR IA: Gráfico de área para visualizar la tendencia de pagos (monto total)
+// Gráfico de área para visualizar la tendencia de pagos (monto total)
 // a lo largo del tiempo, agrupados por mes.
 
 interface MonthlyTrendData {

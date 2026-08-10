@@ -8,7 +8,7 @@ using CustomerPaymentAPI.Repositories.Interfaces;
 namespace CustomerPaymentAPI.Repositories.Implementations
 {
     // =====================================================================
-    // TUTOR IA: IMPLEMENTACIÓN DEL REPOSITORIO DE CUSTOMER
+    //MPLEMENTACIÓN DEL REPOSITORIO DE CUSTOMER
     // =====================================================================
     // Esta clase es la que REALMENTE ejecuta los Stored Procedures contra MySQL.
     // Aquí usamos DOS técnicas complementarias de Entity Framework Core:
@@ -33,7 +33,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
     // =====================================================================
     public class CustomerRepository : ICustomerRepository
     {
-        // TUTOR IA: Inyectamos el AppDbContext mediante el constructor.
+        // Inyectamos el AppDbContext mediante el constructor.
         // .NET lo resuelve automáticamente gracias a la Inyección de Dependencias
         // configurada en Program.cs (builder.Services.AddDbContext<AppDbContext>).
         private readonly AppDbContext _context;
@@ -46,7 +46,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: GetAllAsync — Obtener todos los clientes activos
         // =====================================================================
-        // TUTOR IA: FromSqlRaw ejecuta el SP y mapea cada fila del resultado
+        // FromSqlRaw ejecuta el SP y mapea cada fila del resultado
         // a un objeto Customer. El SP ya filtra por Activo = TRUE y ordena
         // por FechaCreacion DESC, así que no necesitamos agregar .Where() o .OrderBy().
         //
@@ -68,7 +68,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: GetByIdAsync — Obtener un cliente por su Id
         // =====================================================================
-        // TUTOR IA: Usamos {0} como placeholder para el parámetro.
+        // Usamos {0} como placeholder para el parámetro.
         // EF Core lo convierte automáticamente en un parámetro SQL seguro,
         // protegiendo contra inyección SQL. NUNCA concatenes valores directamente
         // en el string SQL (ejemplo INSEGURO: $"CALL sp_Customer_GetById({id})").
@@ -91,7 +91,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: CreateAsync — Crear un nuevo cliente
         // =====================================================================
-        // TUTOR IA: Aquí cambiamos a ADO.NET porque el SP retorna
+        // Aquí cambiamos a ADO.NET porque el SP retorna
         // SELECT LAST_INSERT_ID() AS Id, que es un valor escalar (un solo número),
         // no una fila completa de Customer. FromSqlRaw no puede mapear eso.
         //
@@ -118,21 +118,21 @@ namespace CustomerPaymentAPI.Repositories.Implementations
                 command.CommandText = "sp_Customer_Create";
                 command.CommandType = CommandType.StoredProcedure;
 
-                // TUTOR IA: Cada parámetro debe coincidir con el nombre definido en el SP.
+                // Cada parámetro debe coincidir con el nombre definido en el SP.
                 // El prefijo '@' es opcional en MySqlConnector, pero lo incluimos por claridad.
                 command.Parameters.Add(new MySqlParameter("@p_Nombre", customer.Nombre));
                 command.Parameters.Add(new MySqlParameter("@p_Email", customer.Email));
                 command.Parameters.Add(new MySqlParameter("@p_Telefono", (object?)customer.Telefono ?? DBNull.Value));
                 command.Parameters.Add(new MySqlParameter("@p_Direccion", (object?)customer.Direccion ?? DBNull.Value));
 
-                // TUTOR IA: ExecuteScalarAsync retorna el primer valor de la primera fila del resultado.
+                // ExecuteScalarAsync retorna el primer valor de la primera fila del resultado.
                 // En nuestro caso, el SP hace SELECT LAST_INSERT_ID() AS Id, por lo que retorna el nuevo Id.
                 var resultado = await command.ExecuteScalarAsync();
                 return Convert.ToInt32(resultado);
             }
             finally
             {
-                // TUTOR IA: Siempre cerramos la conexión en el bloque finally para evitar
+                // Siempre cerramos la conexión en el bloque finally para evitar
                 // conexiones huérfanas, incluso si ocurre una excepción.
                 await _context.Database.CloseConnectionAsync();
             }
@@ -141,7 +141,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: UpdateAsync — Actualizar un cliente existente
         // =====================================================================
-        // TUTOR IA: Similar a CreateAsync, usamos ADO.NET porque el SP retorna
+        // Similar a CreateAsync, usamos ADO.NET porque el SP retorna
         // ROW_COUNT() (un escalar), no una entidad Customer.
         // ROW_COUNT() retorna cuántas filas fueron afectadas:
         // - 1 = actualización exitosa
@@ -168,7 +168,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
                 var resultado = await command.ExecuteScalarAsync();
                 var filasAfectadas = Convert.ToInt32(resultado);
 
-                // TUTOR IA: Retornamos true si al menos una fila fue afectada.
+                // Retornamos true si al menos una fila fue afectada.
                 return filasAfectadas > 0;
             }
             finally
@@ -180,7 +180,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: DeleteAsync — Eliminar (soft delete) un cliente
         // =====================================================================
-        // TUTOR IA: El SP sp_Customer_Delete realiza un "Soft Delete":
+        // El SP sp_Customer_Delete realiza un "Soft Delete":
         // UPDATE Customers SET Activo = FALSE WHERE Id = @p_Id
         // El registro NO se borra físicamente, solo se marca como inactivo.
         // Esto preserva la integridad referencial con la tabla Payments.

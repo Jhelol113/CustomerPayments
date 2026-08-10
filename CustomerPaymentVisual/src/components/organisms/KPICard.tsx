@@ -2,7 +2,7 @@ import React from 'react';
 import type { ReactNode } from 'react';
 import './KPICard.css';
 
-// TUTOR IA: Tarjeta individual de KPI para el Dashboard.
+// Tarjeta individual de KPI para el Dashboard.
 // Muestra un icono, un valor numérico destacado y una etiqueta descriptiva.
 
 interface KPICardProps {

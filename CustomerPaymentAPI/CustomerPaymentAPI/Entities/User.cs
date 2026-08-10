@@ -13,7 +13,7 @@ namespace CustomerPaymentAPI.Entities
         [MaxLength(50)]
         public string Username { get; set; }
 
-        // TUTOR IA: NUNCA se debe almacenar la contraseña en texto plano por motivos de seguridad.
+        // NUNCA se debe almacenar la contraseña en texto plano por motivos de seguridad.
         // En lugar de eso, almacenamos un 'Hash'. BCrypt es un algoritmo de hashing seguro que 
         // incorpora 'salts' automáticamente, haciéndolo resistente a ataques de diccionario y fuerza bruta.
         [Required]

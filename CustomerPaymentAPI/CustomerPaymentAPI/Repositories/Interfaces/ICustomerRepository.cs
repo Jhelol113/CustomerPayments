@@ -3,7 +3,7 @@ using CustomerPaymentAPI.Entities;
 namespace CustomerPaymentAPI.Repositories.Interfaces
 {
     // =====================================================================
-    // TUTOR IA: INTERFAZ DEL REPOSITORIO DE CUSTOMER
+    // INTERFAZ DEL REPOSITORIO DE CUSTOMER
     // =====================================================================
     // ¿Por qué usamos una interfaz?
     // 1. DESACOPLAMIENTO: La capa de negocio (Service) NO conoce la implementación

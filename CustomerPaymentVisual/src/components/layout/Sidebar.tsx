@@ -16,7 +16,7 @@ const Sidebar: React.FC = () => {
     <aside className="sidebar">
       <div className="sidebar-logo">
         <span>✧</span>
-        <span>SysAdmin Pro</span>
+        <span>CustomerPayment</span>
       </div>
       
       <nav className="sidebar-nav">

@@ -13,7 +13,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 
 // =====================================================================
-// TUTOR IA: PROGRAM.CS — PUNTO DE ENTRADA DE LA APLICACIÓN
+// PROGRAM.CS — PUNTO DE ENTRADA DE LA APLICACIÓN
 // =====================================================================
 // Este archivo configura TODA la aplicación. Aquí se registran:
 // 1. Servicios (Inyección de Dependencias)
@@ -32,7 +32,7 @@ var builder = WebApplication.CreateBuilder(args);
 // =====================================================================
 // 1. REGISTRO DEL DBCONTEXT (MySQL con Pomelo)
 // =====================================================================
-// TUTOR IA: Registramos el AppDbContext para que EF Core pueda
+// Registramos el AppDbContext para que EF Core pueda
 // gestionar la conexión a MySQL. ServerVersion.AutoDetect detecta
 // automáticamente la versión de MySQL instalada en el servidor.
 // =====================================================================
@@ -43,7 +43,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // =====================================================================
 // 2. INYECCIÓN DE DEPENDENCIAS — REPOSITORIOS
 // =====================================================================
-// TUTOR IA: AddScoped crea UNA instancia por cada petición HTTP.
+// AddScoped crea UNA instancia por cada petición HTTP.
 // Esto es ideal para repositorios porque cada petición debe tener
 // su propia conexión a la base de datos.
 //
@@ -63,7 +63,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 // =====================================================================
 // 3. INYECCIÓN DE DEPENDENCIAS — SERVICIOS
 // =====================================================================
-// TUTOR IA: Los servicios también son Scoped porque dependen de
+// Los servicios también son Scoped porque dependen de
 // los repositorios (que son Scoped). Un servicio Singleton NO puede
 // depender de un servicio Scoped (error en tiempo de ejecución).
 // =====================================================================
@@ -74,8 +74,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // =====================================================================
 // 4. INYECCIÓN DE DEPENDENCIAS — SEGURIDAD
 // =====================================================================
-// TUTOR IA: JwtHelper es Singleton porque solo depende de IConfiguration
-// (que también es Singleton). No tiene estado mutable, así que una sola
+// No tiene estado mutable, así que una sola
 // instancia compartida entre todas las peticiones es eficiente y seguro.
 // =====================================================================
 builder.Services.AddSingleton<JwtHelper>();
@@ -83,7 +82,7 @@ builder.Services.AddSingleton<JwtHelper>();
 // =====================================================================
 // 5. CONFIGURACIÓN DE AUTENTICACIÓN JWT
 // =====================================================================
-// TUTOR IA: Aquí le decimos a .NET CÓMO validar los tokens JWT que
+// Aquí le decimos a .NET CÓMO validar los tokens JWT que
 // llegan en el header "Authorization: Bearer <token>".
 //
 // TokenValidationParameters define las reglas de validación:
@@ -123,7 +122,7 @@ builder.Services.AddAuthentication(options =>
 // =====================================================================
 // 6. CONFIGURACIÓN DE CORS
 // =====================================================================
-// TUTOR IA: CORS (Cross-Origin Resource Sharing) es un mecanismo de
+// CORS (Cross-Origin Resource Sharing) es un mecanismo de
 // seguridad de los navegadores que BLOQUEA peticiones HTTP entre
 // diferentes orígenes (dominios/puertos).
 //
@@ -154,7 +153,7 @@ builder.Services.AddCors(options =>
 // =====================================================================
 // 7. CONTROLLERS Y SWAGGER
 // =====================================================================
-// TUTOR IA: Swagger genera documentación interactiva de la API.
+// Swagger genera documentación interactiva de la API.
 // La configuración de seguridad permite probar endpoints protegidos
 // directamente desde Swagger UI ingresando el token JWT.
 //
@@ -178,7 +177,7 @@ builder.Services.AddSwaggerGen(options =>
         Description = "API CRUD para gestión de Clientes y Pagos con autenticación JWT"
     });
 
-    // TUTOR IA: Configuración de seguridad en Swagger para JWT.
+    // Configuración de seguridad en Swagger para JWT.
     // Esto agrega el botón "Authorize" en la interfaz de Swagger UI
     // donde puedes ingresar tu token para probar endpoints protegidos.
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -212,7 +211,7 @@ var app = builder.Build();
 // =====================================================================
 // 8. SEED — CREAR USUARIO ADMINISTRADOR INICIAL
 // =====================================================================
-// TUTOR IA: Este bloque se ejecuta UNA VEZ al iniciar la aplicación.
+// Este bloque se ejecuta UNA VEZ al iniciar la aplicación.
 // Crea el usuario "admin" con contraseña "Admin123!" y rol "Admin".
 //
 // ¿Por qué usamos CreateScope?
@@ -232,7 +231,7 @@ using (var scope = app.Services.CreateScope())
 // =====================================================================
 // 9. PIPELINE DE MIDDLEWARES
 // =====================================================================
-// TUTOR IA: El orden de los middlewares es CRUCIAL.
+// El orden de los middlewares es CRUCIAL.
 // Cada petición HTTP pasa por estos middlewares en ESTE ORDEN:
 //
 // Petición entrante:

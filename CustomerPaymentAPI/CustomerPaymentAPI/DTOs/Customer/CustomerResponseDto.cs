@@ -1,6 +1,6 @@
 namespace CustomerPaymentAPI.DTOs.Customer
 {
-    // TUTOR IA: Este DTO de respuesta solo expone lo que el cliente necesita ver.
+    // Este DTO de respuesta solo expone lo que el cliente necesita ver.
     // Por ejemplo, podríamos omitir información sensible de la entidad original.
     // Además, mantiene un contrato estable con el frontend, independiente de cómo cambie la base de datos.
     public class CustomerResponseDto

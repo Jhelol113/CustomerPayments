@@ -15,7 +15,7 @@ namespace CustomerPaymentAPI.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // TUTOR IA: Usamos DbContext principalmente para mapear los resultados de los SPs (con FromSqlRaw).
+            // Usamos DbContext principalmente para mapear los resultados de los SPs (con FromSqlRaw).
             // Configuramos los DbSets que servirán como receptores de esos resultados.
 
             modelBuilder.Entity<Customer>(entity => 
@@ -24,7 +24,7 @@ namespace CustomerPaymentAPI.Data
                 entity.HasKey(e => e.Id); 
             });
 
-            // TUTOR IA: Configuramos la relación 1:N entre Customer y Payment.
+            // Configuramos la relación 1:N entre Customer y Payment.
             // Restringimos el borrado en cascada (DeleteBehavior.Restrict) para proteger la integridad referencial.
             modelBuilder.Entity<Payment>(entity => 
             { 
@@ -37,7 +37,7 @@ namespace CustomerPaymentAPI.Data
                 
                 entity.Property(p => p.Monto).HasColumnType("decimal(18,2)"); 
                 
-                // TUTOR IA: Ignoramos CustomerNombre porque es un campo calculado por el SP (JOIN), 
+                // Ignoramos CustomerNombre porque es un campo calculado por el SP (JOIN), 
                 // por lo tanto no existe físicamente en la tabla Payments.
                 entity.Ignore(p => p.CustomerNombre); 
             });
@@ -48,7 +48,7 @@ namespace CustomerPaymentAPI.Data
                 entity.HasKey(e => e.Id); 
             });
 
-            // TUTOR IA: En esta arquitectura, EF Core se usa primordialmente para gestionar la conexión y ejecutar los SPs, 
+            // En esta arquitectura, EF Core se usa primordialmente para gestionar la conexión y ejecutar los SPs, 
             // no para autogenerar el esquema (Migraciones), ya que los Scripts SQL (SPs) tomarán el control de la lógica.
         }
     }

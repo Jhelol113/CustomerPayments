@@ -5,7 +5,7 @@ using CustomerPaymentAPI.Services.Interfaces;
 namespace CustomerPaymentAPI.Controllers
 {
     // =====================================================================
-    // TUTOR IA: CONTROLLER DE AUTENTICACIÓN
+    // CONTROLLER DE AUTENTICACIÓN
     // =====================================================================
     // Este controller maneja el flujo de seguridad del sistema:
     // - Login: Autentica usuarios y genera tokens JWT
@@ -29,7 +29,7 @@ namespace CustomerPaymentAPI.Controllers
     {
         private readonly IAuthService _authService;
 
-        // TUTOR IA: Inyectamos la INTERFAZ del servicio, no la implementación.
+        // Inyectamos la INTERFAZ del servicio, no la implementación.
         // El Controller es la capa más externa — solo maneja HTTP.
         // Toda la lógica de negocio está delegada al Service.
         public AuthController(IAuthService authService)
@@ -40,7 +40,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // POST: api/auth/login
         // =====================================================================
-        // TUTOR IA: Flujo completo de un Login exitoso:
+        // Flujo completo de un Login exitoso:
         // 1. El frontend envía: { "username": "admin", "password": "Admin123!" }
         // 2. [ApiController] valida automáticamente el DTO (campos Required)
         // 3. AuthService busca al usuario y verifica la contraseña con BCrypt
@@ -72,7 +72,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // POST: api/auth/register
         // =====================================================================
-        // TUTOR IA: Endpoint para crear nuevos usuarios en el sistema.
+        // Endpoint para crear nuevos usuarios en el sistema.
         //
         // El parámetro 'rol' viene del Query String, no del body:
         // POST /api/auth/register?rol=Admin

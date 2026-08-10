@@ -1,6 +1,6 @@
 namespace CustomerPaymentAPI.DTOs.Customer
 {
-    // TUTOR IA: El patrón DTO (Data Transfer Object) se usa para transportar datos entre el cliente (frontend) y el servidor (backend).
+    // El patrón DTO (Data Transfer Object) se usa para transportar datos entre el cliente (frontend) y el servidor (backend).
     // Separamos el Request del Entity para evitar 'Overposting' (ataques donde se intentan modificar campos protegidos como ID o Activo)
     // y para validar los datos de entrada sin ensuciar la entidad del dominio.
     public class CustomerRequestDto

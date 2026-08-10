@@ -3,7 +3,7 @@ using CustomerPaymentAPI.DTOs.Payment;
 namespace CustomerPaymentAPI.Services.Interfaces
 {
     // =====================================================================
-    // TUTOR IA: INTERFAZ DEL SERVICIO DE PAYMENT
+    // INTERFAZ DEL SERVICIO DE PAYMENT
     // =====================================================================
     // Sigue el mismo patrón que ICustomerService pero con una diferencia:
     //

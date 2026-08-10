@@ -3,7 +3,7 @@ using CustomerPaymentAPI.Entities;
 namespace CustomerPaymentAPI.Repositories.Interfaces
 {
     // =====================================================================
-    // TUTOR IA: INTERFAZ DEL REPOSITORIO DE PAYMENT
+    // INTERFAZ DEL REPOSITORIO DE PAYMENT
     // =====================================================================
     // Esta interfaz sigue exactamente el mismo patrón que ICustomerRepository.
     // La diferencia principal está en GetAllAsync, que recibe un parámetro

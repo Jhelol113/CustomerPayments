@@ -6,7 +6,7 @@ using CustomerPaymentAPI.Services.Interfaces;
 namespace CustomerPaymentAPI.Controllers
 {
     // =====================================================================
-    // TUTOR IA: CONTROLLER DE PAYMENT — CRUD CON FILTRO Y VALIDACIÓN CRUZADA
+    // CONTROLLER DE PAYMENT — CRUD CON FILTRO Y VALIDACIÓN CRUZADA
     // =====================================================================
     // Este controller tiene dos particularidades respecto a CustomerController:
     //
@@ -45,7 +45,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // GET: api/payments?customerId=5 — Listar pagos (con filtro opcional)
         // =====================================================================
-        // TUTOR IA: [FromQuery] bindea el parámetro desde el query string.
+        // [FromQuery] bindea el parámetro desde el query string.
         // Ejemplos de uso:
         //   GET /api/payments          → Todos los pagos
         //   GET /api/payments?customerId=3  → Solo pagos del cliente 3
@@ -64,7 +64,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // GET: api/payments/{id} — Obtener un pago por Id
         // =====================================================================
-        // TUTOR IA: La respuesta incluye CustomerNombre (del JOIN en el SP).
+        // La respuesta incluye CustomerNombre (del JOIN en el SP).
         // Esto permite al frontend mostrar "Pago de Juan Pérez" sin hacer
         // una segunda petición para obtener los datos del cliente.
         // =====================================================================
@@ -84,7 +84,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // POST: api/payments — Crear un nuevo pago
         // =====================================================================
-        // TUTOR IA: Este endpoint tiene un try-catch para manejar la
+        // Este endpoint tiene un try-catch para manejar la
         // ArgumentException que lanza PaymentService cuando el CustomerId
         // no existe.
         //
@@ -110,14 +110,14 @@ namespace CustomerPaymentAPI.Controllers
             }
             catch (ArgumentException ex)
             {
-                // TUTOR IA: Capturamos ArgumentException específicamente
+                // Capturamos ArgumentException específicamente
                 // porque es la excepción que usa PaymentService para errores
                 // de validación de negocio (cliente no existe).
                 return BadRequest(new { mensaje = ex.Message });
             }
             catch (Exception ex)
             {
-                // TUTOR IA: Capturamos Exception genérica para errores
+                // Capturamos Exception genérica para errores
                 // inesperados (ej: error de conexión a BD).
                 return BadRequest(new { mensaje = "Error al crear el pago.", detalle = ex.Message });
             }
@@ -126,7 +126,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // PUT: api/payments/{id} — Actualizar un pago existente
         // =====================================================================
-        // TUTOR IA: Mismo patrón de try-catch que Create porque UpdateAsync
+        // Mismo patrón de try-catch que Create porque UpdateAsync
         // también puede lanzar ArgumentException si el CustomerId es inválido.
         //
         // El Service retorna false si el pago no existe (→ 404).
@@ -155,7 +155,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // DELETE: api/payments/{id} — Eliminar un pago (hard delete)
         // =====================================================================
-        // TUTOR IA: A diferencia de Customer (soft delete), los pagos se
+        // A diferencia de Customer (soft delete), los pagos se
         // eliminan permanentemente de la base de datos.
         // El SP sp_Payment_Delete ejecuta: DELETE FROM Payments WHERE Id = @p_Id
         // =====================================================================

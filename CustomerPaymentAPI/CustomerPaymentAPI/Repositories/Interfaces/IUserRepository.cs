@@ -3,7 +3,7 @@ using CustomerPaymentAPI.Entities;
 namespace CustomerPaymentAPI.Repositories.Interfaces
 {
     // =====================================================================
-    // TUTOR IA: INTERFAZ DEL REPOSITORIO DE USER
+    //  INTERFAZ DEL REPOSITORIO DE USER
     // =====================================================================
     // A diferencia de Customer y Payment, el repositorio de User NO tiene
     // CRUD completo. Solo necesitamos dos operaciones para autenticación:

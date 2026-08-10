@@ -6,7 +6,7 @@ using CustomerPaymentAPI.Services.Interfaces;
 namespace CustomerPaymentAPI.Controllers
 {
     // =====================================================================
-    // TUTOR IA: CONTROLLER DE CUSTOMER — CRUD COMPLETO PROTEGIDO CON JWT
+    // CONTROLLER DE CUSTOMER — CRUD COMPLETO PROTEGIDO CON JWT
     // =====================================================================
     // Este controller expone los endpoints REST para gestionar clientes.
     // TODOS los endpoints requieren autenticación ([Authorize] a nivel de clase).
@@ -30,7 +30,7 @@ namespace CustomerPaymentAPI.Controllers
     // =====================================================================
     [Route("api/customers")]
     [ApiController]
-    [Authorize]  // TUTOR IA: Todos los endpoints de este controller requieren JWT válido
+    [Authorize]  // Todos los endpoints de este controller requieren JWT válido
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
@@ -43,7 +43,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // GET: api/customers — Listar todos los clientes activos
         // =====================================================================
-        // TUTOR IA: Retorna HTTP 200 con un array JSON de clientes.
+        // Retorna HTTP 200 con un array JSON de clientes.
         // Si no hay clientes, retorna un array vacío [] (NO un 404).
         // Un array vacío es una respuesta válida — significa "hay 0 resultados".
         // 404 se reserva para recursos específicos que no existen.
@@ -58,7 +58,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // GET: api/customers/{id} — Obtener un cliente por Id
         // =====================================================================
-        // TUTOR IA: El parámetro {id} viene de la URL (route parameter).
+        // El parámetro {id} viene de la URL (route parameter).
         // .NET lo bindea automáticamente al parámetro int id del método.
         //
         // Si el Service retorna null, devolvemos 404 con un mensaje descriptivo.
@@ -80,7 +80,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // POST: api/customers — Crear un nuevo cliente
         // =====================================================================
-        // TUTOR IA: [FromBody] indica que el DTO viene del cuerpo JSON.
+        // [FromBody] indica que el DTO viene del cuerpo JSON.
         // [ApiController] valida automáticamente las Data Annotations del DTO.
         // Si el DTO es inválido (ej: falta Nombre), retorna 400 automáticamente.
         //
@@ -102,7 +102,7 @@ namespace CustomerPaymentAPI.Controllers
             }
             catch (Exception ex)
             {
-                // TUTOR IA: Si el email ya existe (violación de UNIQUE en MySQL),
+                // Si el email ya existe (violación de UNIQUE en MySQL),
                 // el Repository lanzará una excepción que capturamos aquí.
                 return BadRequest(new { mensaje = "Error al crear el cliente.", detalle = ex.Message });
             }
@@ -111,7 +111,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // PUT: api/customers/{id} — Actualizar un cliente existente
         // =====================================================================
-        // TUTOR IA: El Id viene de la URL y los datos del body.
+        // El Id viene de la URL y los datos del body.
         // El Service verifica que el cliente exista antes de actualizar.
         //
         // Retornamos 204 (No Content) en éxito porque:
@@ -136,7 +136,7 @@ namespace CustomerPaymentAPI.Controllers
         // =====================================================================
         // DELETE: api/customers/{id} — Desactivar un cliente (soft delete)
         // =====================================================================
-        // TUTOR IA: El SP sp_Customer_Delete hace soft delete (Activo = FALSE).
+        // El SP sp_Customer_Delete hace soft delete (Activo = FALSE).
         // El cliente no se borra físicamente, solo se marca como inactivo.
         // Esto preserva la relación con sus pagos existentes.
         //

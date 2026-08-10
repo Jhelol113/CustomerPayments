@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CustomerPaymentAPI.DTOs.Auth
 {
-    // TUTOR IA: Este DTO NUNCA se persiste en la base de datos. 
+    // Este DTO NUNCA se persiste en la base de datos. 
     // Solo se utiliza transitoriamente durante el flujo de autenticación para capturar las credenciales del usuario.
     public class LoginRequestDto
     {

@@ -6,7 +6,7 @@ using CustomerPaymentAPI.Services.Interfaces;
 namespace CustomerPaymentAPI.Services.Implementations
 {
     // =====================================================================
-    // TUTOR IA: IMPLEMENTACIÓN DEL SERVICIO DE PAYMENT
+    // IMPLEMENTACIÓN DEL SERVICIO DE PAYMENT
     // =====================================================================
     // Este servicio tiene una particularidad que lo diferencia de CustomerService:
     // VALIDACIÓN CRUZADA entre entidades.
@@ -24,7 +24,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         private readonly IPaymentRepository _paymentRepository;
         private readonly ICustomerRepository _customerRepository;
 
-        // TUTOR IA: Inyectamos ambos repositorios.
+        // Inyectamos ambos repositorios.
         // El Service es la ÚNICA capa que puede coordinar múltiples repositorios.
         // El Repository solo conoce su propia entidad.
         public PaymentService(
@@ -38,7 +38,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: GetAllAsync — Obtener pagos (todos o filtrados por cliente)
         // =====================================================================
-        // TUTOR IA: El parámetro customerId es optional (nullable int).
+        // El parámetro customerId es optional (nullable int).
         // - Si es null → el Repository pasa NULL al SP → trae todos los pagos
         // - Si tiene valor → filtra por ese CustomerId
         //
@@ -63,7 +63,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: CreateAsync — Crear un nuevo pago
         // =====================================================================
-        // TUTOR IA: VALIDACIÓN CRUZADA — Antes de crear el pago, verificamos
+        // VALIDACIÓN CRUZADA — Antes de crear el pago, verificamos
         // que el Customer referenciado exista y esté activo.
         //
         // ¿Por qué lanzamos una excepción en vez de retornar null?
@@ -76,7 +76,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         public async Task<PaymentResponseDto> CreateAsync(PaymentRequestDto dto)
         {
-            // TUTOR IA: Validación cruzada — verificar que el cliente existe.
+            // Validación cruzada — verificar que el cliente existe.
             var customer = await _customerRepository.GetByIdAsync(dto.CustomerId);
             if (customer == null)
             {
@@ -87,7 +87,7 @@ namespace CustomerPaymentAPI.Services.Implementations
             var entity = MapToEntity(dto);
             var nuevoId = await _paymentRepository.CreateAsync(entity);
 
-            // TUTOR IA: Recuperamos el pago completo (con CustomerNombre del JOIN).
+            // Recuperamos el pago completo (con CustomerNombre del JOIN).
             var creado = await _paymentRepository.GetByIdAsync(nuevoId);
             return MapToResponseDto(creado!);
         }
@@ -95,7 +95,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: UpdateAsync — Actualizar un pago existente
         // =====================================================================
-        // TUTOR IA: Doble validación:
+        // Doble validación:
         // 1. El pago debe existir (por su Id)
         // 2. El nuevo CustomerId (si cambió) debe referenciar un cliente válido
         //
@@ -121,7 +121,7 @@ namespace CustomerPaymentAPI.Services.Implementations
             var entity = MapToEntity(dto);
             entity.Id = id;
 
-            // TUTOR IA: Si no se envió un Estado en el DTO, mantenemos el actual.
+            // Si no se envió un Estado en el DTO, mantenemos el actual.
             // Esto evita que un update accidental resetee el estado a null.
             if (string.IsNullOrEmpty(entity.Estado))
             {
@@ -134,7 +134,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: DeleteAsync — Eliminar un pago (hard delete)
         // =====================================================================
-        // TUTOR IA: A diferencia de Customer (soft delete), los pagos se
+        // A diferencia de Customer (soft delete), los pagos se
         // eliminan permanentemente. Validamos existencia antes de intentar.
         // =====================================================================
         public async Task<bool> DeleteAsync(int id)
@@ -164,7 +164,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODOS PRIVADOS DE MAPEO
         // =====================================================================
-        // TUTOR IA: Nótese que MapToResponseDto incluye CustomerNombre,
+        // Nótese que MapToResponseDto incluye CustomerNombre,
         // que viene del JOIN que hace el SP con la tabla Customers.
         // Este campo permite al frontend mostrar "Pago de [nombre]" sin
         // necesidad de hacer otra llamada a la API para obtener los datos
@@ -195,7 +195,7 @@ namespace CustomerPaymentAPI.Services.Implementations
                 Monto = dto.Monto,
                 MetodoPago = dto.MetodoPago,
 
-                // TUTOR IA: Estado puede ser null (en creación). Si es null,
+                // Estado puede ser null (en creación). Si es null,
                 // el SP usa 'Pendiente' como valor por defecto de la tabla.
                 // En actualización, el método UpdateAsync se encarga de
                 // asignar el estado actual si no se envió uno nuevo.

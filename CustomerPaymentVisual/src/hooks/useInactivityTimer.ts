@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from 'react';
 
-// TUTOR IA: Hook personalizado para detectar inactividad del usuario.
+// Hook personalizado para detectar inactividad del usuario.
 // Escucha eventos de interacción (mouse, teclado, scroll, touch).
 // Si no hay actividad durante el tiempo configurado, ejecuta el callback.
 

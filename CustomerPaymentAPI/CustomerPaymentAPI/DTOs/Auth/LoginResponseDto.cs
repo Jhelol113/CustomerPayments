@@ -1,6 +1,6 @@
 namespace CustomerPaymentAPI.DTOs.Auth
 {
-    // TUTOR IA: Esta es la estructura estándar de respuesta cuando generamos un JWT (JSON Web Token).
+    //Esta es la estructura estándar de respuesta cuando generamos un JWT (JSON Web Token).
     // El frontend guardará el 'Token' (usualmente en LocalStorage o Cookies) y lo enviará en las siguientes peticiones.
     public class LoginResponseDto
     {

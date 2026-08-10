@@ -9,7 +9,7 @@ import PaymentTrendChart from '../components/organisms/PaymentTrendChart';
 import CustomerTotalPaymentsChart from '../components/organisms/CustomerTotalPaymentsChart';
 import './KPIsPage.css';
 
-// TUTOR IA: Página de Dashboard con KPIs (Key Performance Indicators).
+// Página de Dashboard con KPIs .
 // Carga datos reales de la API y calcula métricas en el frontend.
 
 const KPIsPage: React.FC = () => {
@@ -81,7 +81,7 @@ const KPIsPage: React.FC = () => {
     const name = p.customerNombre || `Cliente #${p.customerId}`;
     customerTotalsMap.set(name, (customerTotalsMap.get(name) || 0) + p.monto);
   });
-
+  
   const customerTotalData = Array.from(customerTotalsMap.entries())
     .map(([nombre, total]) => {
       const nombreCorto = nombre.length > 15 ? nombre.substring(0, 15) + '...' : nombre;

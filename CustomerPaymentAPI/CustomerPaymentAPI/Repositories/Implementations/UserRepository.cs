@@ -8,7 +8,7 @@ using CustomerPaymentAPI.Repositories.Interfaces;
 namespace CustomerPaymentAPI.Repositories.Implementations
 {
     // =====================================================================
-    // TUTOR IA: IMPLEMENTACIÓN DEL REPOSITORIO DE USER
+    // IMPLEMENTACIÓN DEL REPOSITORIO DE USER
     // =====================================================================
     // Este repositorio soporta las operaciones necesarias para autenticación:
     // - GetByUsernameAsync: Buscar usuario para login (FromSqlRaw)
@@ -34,7 +34,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: GetByUsernameAsync — Buscar usuario por nombre de usuario
         // =====================================================================
-        // TUTOR IA: Este método se invoca durante el proceso de login.
+        // Este método se invoca durante el proceso de login.
         // El SP sp_User_GetByUsername busca por Username Y verifica que
         // el usuario esté activo (Activo = TRUE).
         //
@@ -56,7 +56,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: CreateAsync — Registrar un nuevo usuario
         // =====================================================================
-        // TUTOR IA: El SP sp_User_Create inserta el usuario y retorna
+        // El SP sp_User_Create inserta el usuario y retorna
         // LAST_INSERT_ID() con el Id generado.
         //
         // IMPORTANTE: user.PasswordHash DEBE contener el hash BCrypt

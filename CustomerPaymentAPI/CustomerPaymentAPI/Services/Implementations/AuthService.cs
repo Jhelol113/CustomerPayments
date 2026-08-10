@@ -84,7 +84,7 @@ namespace CustomerPaymentAPI.Services.Implementations
             }
 
             // Paso 3: Generar token JWT
-            // TUTOR IA: JwtHelper retorna una tupla (token, expiración).
+            // JwtHelper retorna una tupla (token, expiración).
             // Usamos desestructuración de tupla para obtener ambos valores.
             var (token, expiracion) = _jwtHelper.GenerateToken(user);
 
@@ -126,13 +126,13 @@ namespace CustomerPaymentAPI.Services.Implementations
             var existente = await _userRepository.GetByUsernameAsync(username);
             if (existente != null)
             {
-                // TUTOR IA: Si el usuario ya existe, retornamos false.
+                // Si el usuario ya existe, retornamos false.
                 // El Controller devolverá HTTP 409 (Conflict).
                 return false;
             }
 
             // Paso 2: Hashear la contraseña
-            // TUTOR IA: NUNCA almacenes contraseñas en texto plano.
+            // NUNCA almacenes contraseñas en texto plano.
             // BCrypt agrega un salt aleatorio automáticamente, por lo que
             // dos usuarios con la misma contraseña tendrán hashes DIFERENTES.
             var passwordHash = BCrypt.Net.BCrypt.HashPassword(password);

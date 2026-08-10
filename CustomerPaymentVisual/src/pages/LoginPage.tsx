@@ -45,7 +45,7 @@ const LoginPage: React.FC = () => {
       <div className="login-card">
         <div className="login-header">
           <div className="login-logo">✧</div>
-          <h1 className="login-title">SysAdmin Pro</h1>
+          <h1 className="login-title">CustomerPayment</h1>
           <p className="login-subtitle">Inicia sesión para continuar</p>
         </div>
 

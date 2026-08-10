@@ -3,7 +3,7 @@ using CustomerPaymentAPI.DTOs.Customer;
 namespace CustomerPaymentAPI.Services.Interfaces
 {
     // =====================================================================
-    // TUTOR IA: INTERFAZ DEL SERVICIO DE CUSTOMER
+    // INTERFAZ DEL SERVICIO DE CUSTOMER
     // =====================================================================
     // La capa de Servicio es la responsable de:
     // 1. VALIDAR reglas de negocio (¿existe el cliente? ¿datos válidos?)

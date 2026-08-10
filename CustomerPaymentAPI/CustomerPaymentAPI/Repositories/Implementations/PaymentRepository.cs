@@ -8,7 +8,7 @@ using CustomerPaymentAPI.Repositories.Interfaces;
 namespace CustomerPaymentAPI.Repositories.Implementations
 {
     // =====================================================================
-    // TUTOR IA: IMPLEMENTACIÓN DEL REPOSITORIO DE PAYMENT
+    // IMPLEMENTACIÓN DEL REPOSITORIO DE PAYMENT
     // =====================================================================
     // A diferencia de CustomerRepository, aquí usamos ADO.NET (MySqlCommand)
     // para TODAS las operaciones, incluyendo las de lectura (GetAll, GetById).
@@ -42,7 +42,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: GetAllAsync — Obtener pagos (todos o filtrados por cliente)
         // =====================================================================
-        // TUTOR IA: Este método ejecuta sp_Payment_GetAll que recibe p_CustomerId.
+        // Este método ejecuta sp_Payment_GetAll que recibe p_CustomerId.
         // Si es NULL → trae todos los pagos. Si tiene valor → filtra por cliente.
         //
         // El SP hace JOIN con Customers para traer CustomerNombre, por eso
@@ -69,11 +69,11 @@ namespace CustomerPaymentAPI.Repositories.Implementations
                 command.CommandText = "sp_Payment_GetAll";
                 command.CommandType = CommandType.StoredProcedure;
 
-                // TUTOR IA: Si customerId es null en C#, enviamos DBNull.Value a MySQL.
+                // Si customerId es null en C#, enviamos DBNull.Value a MySQL.
                 // El SP interpreta NULL como "traer todos los pagos sin filtrar".
                 command.Parameters.Add(new MySqlParameter("@p_CustomerId", (object?)customerId ?? DBNull.Value));
 
-                // TUTOR IA: ExecuteReaderAsync retorna un DataReader que nos permite
+                // ExecuteReaderAsync retorna un DataReader que nos permite
                 // leer los resultados fila por fila, a diferencia de ExecuteScalar
                 // que solo retorna un único valor.
                 using var reader = await command.ExecuteReaderAsync();
@@ -94,7 +94,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: GetByIdAsync — Obtener un pago específico por Id
         // =====================================================================
-        // TUTOR IA: Mismo patrón que GetAll pero para un solo registro.
+        // Mismo patrón que GetAll pero para un solo registro.
         // El SP sp_Payment_GetById también hace JOIN para traer CustomerNombre.
         // =====================================================================
         public async Task<Payment?> GetByIdAsync(int id)
@@ -114,7 +114,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
 
                 using var reader = await command.ExecuteReaderAsync();
 
-                // TUTOR IA: ReadAsync retorna true si hay una fila para leer.
+                // ReadAsync retorna true si hay una fila para leer.
                 // Si el SP no encontró el pago, ReadAsync retorna false
                 // y payment queda como null, que es exactamente lo que queremos.
                 if (await reader.ReadAsync())
@@ -133,7 +133,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: CreateAsync — Crear un nuevo pago
         // =====================================================================
-        // TUTOR IA: El SP sp_Payment_Create inserta el registro y retorna
+        // El SP sp_Payment_Create inserta el registro y retorna
         // LAST_INSERT_ID() con el nuevo Id generado.
         // El Estado inicial será 'Pendiente' (valor por defecto en la tabla).
         // =====================================================================
@@ -166,7 +166,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: UpdateAsync — Actualizar un pago existente
         // =====================================================================
-        // TUTOR IA: Permite actualizar todos los campos del pago, incluyendo
+        // Permite actualizar todos los campos del pago, incluyendo
         // el Estado (Pendiente → Completado → Cancelado). En un sistema real,
         // podrías agregar validaciones de transición de estado en la capa Service.
         // =====================================================================
@@ -203,7 +203,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO: DeleteAsync — Eliminar un pago (hard delete)
         // =====================================================================
-        // TUTOR IA: A diferencia del Customer (soft delete), aquí se realiza
+        // A diferencia del Customer (soft delete), aquí se realiza
         // un borrado FÍSICO (DELETE FROM). El SP sp_Payment_Delete elimina
         // permanentemente el registro de la base de datos.
         // =====================================================================
@@ -235,7 +235,7 @@ namespace CustomerPaymentAPI.Repositories.Implementations
         // =====================================================================
         // MÉTODO PRIVADO: MapearPaymentDesdeReader
         // =====================================================================
-        // TUTOR IA: Este método auxiliar extrae los datos del DataReader y
+        // Este método auxiliar extrae los datos del DataReader y
         // construye un objeto Payment manualmente. Lo separamos en su propio
         // método para evitar duplicación de código (DRY — Don't Repeat Yourself).
         //

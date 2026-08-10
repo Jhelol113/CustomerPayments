@@ -6,7 +6,7 @@ using CustomerPaymentAPI.Services.Interfaces;
 namespace CustomerPaymentAPI.Services.Implementations
 {
     // =====================================================================
-    // TUTOR IA: IMPLEMENTACIÓN DEL SERVICIO DE CUSTOMER
+    // IMPLEMENTACIÓN DEL SERVICIO DE CUSTOMER
     // =====================================================================
     // Esta clase contiene la LÓGICA DE NEGOCIO para la entidad Customer.
     // Su responsabilidad principal es:
@@ -17,11 +17,6 @@ namespace CustomerPaymentAPI.Services.Implementations
     // 4. DELEGAR al repositorio (nunca accede directamente a la BD)
     // 5. RETORNAR DTOs al Controller (nunca Entidades)
     //
-    // ¿Por qué mapeamos manualmente y no usamos AutoMapper?
-    // Para un sistema de este tamaño, el mapeo manual es más transparente
-    // y educativo. AutoMapper agrega complejidad y puede ocultar errores.
-    // En sistemas grandes con muchos DTOs, AutoMapper sí vale la pena.
-    //
     // PRINCIPIO DE RESPONSABILIDAD ÚNICA (SRP):
     // El Service NO sabe cómo se ejecutan los SPs (eso es del Repository).
     // El Service NO sabe qué HTTP status devolver (eso es del Controller).
@@ -29,7 +24,7 @@ namespace CustomerPaymentAPI.Services.Implementations
     // =====================================================================
     public class CustomerService : ICustomerService
     {
-        // TUTOR IA: Inyectamos la INTERFAZ del repositorio, no la implementación.
+        // Inyectamos la INTERFAZ del repositorio, no la implementación.
         // Esto permite cambiar la implementación sin tocar este código.
         private readonly ICustomerRepository _customerRepository;
         private readonly IPaymentRepository _paymentRepository;
@@ -43,7 +38,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: GetAllAsync — Obtener todos los clientes como DTOs
         // =====================================================================
-        // TUTOR IA: Flujo completo de una petición GET /api/customers:
+        // Flujo completo de una petición GET /api/customers:
         // 1. Controller llama a _customerService.GetAllAsync()
         // 2. Este método llama a _customerRepository.GetAllAsync()
         // 3. El Repository ejecuta el SP sp_Customer_GetAll
@@ -55,7 +50,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         {
             var customers = await _customerRepository.GetAllAsync();
 
-            // TUTOR IA: .Select() aplica la función MapToResponseDto a cada elemento.
+            // .Select() aplica la función MapToResponseDto a cada elemento.
             // Es equivalente a un foreach que crea una lista de DTOs.
             return customers.Select(MapToResponseDto);
         }
@@ -63,14 +58,14 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: GetByIdAsync — Obtener un cliente específico como DTO
         // =====================================================================
-        // TUTOR IA: Retorna null si el cliente no existe. El Controller
+        // Retorna null si el cliente no existe. El Controller
         // convertirá ese null en una respuesta HTTP 404 (Not Found).
         // =====================================================================
         public async Task<CustomerResponseDto?> GetByIdAsync(int id)
         {
             var customer = await _customerRepository.GetByIdAsync(id);
 
-            // TUTOR IA: Operador ternario: si customer no es null, mapeamos.
+            // Operador ternario: si customer no es null, mapeamos.
             // Si es null, retornamos null directamente.
             return customer != null ? MapToResponseDto(customer) : null;
         }
@@ -78,15 +73,13 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: CreateAsync — Crear un nuevo cliente
         // =====================================================================
-        // TUTOR IA: Flujo de creación:
+        // Flujo de creación:
         // 1. Convertimos el DTO de request a una entidad Customer
         // 2. El Repository ejecuta sp_Customer_Create y retorna el nuevo Id
         // 3. Buscamos el cliente recién creado con GetByIdAsync para obtener
         //    todos sus datos (incluyendo FechaCreacion generada por MySQL)
         // 4. Mapeamos la entidad completa a un DTO de respuesta
-        //
-        // ¿Por qué no simplemente retornar el DTO con el Id?
-        // Porque necesitamos campos que la BD genera automáticamente:
+        // Necesitamos campos que la BD genera automáticamente:
         // FechaCreacion (CURRENT_TIMESTAMP) y Activo (TRUE por defecto).
         // Solo el SP nos da esos valores reales.
         // =====================================================================
@@ -95,7 +88,7 @@ namespace CustomerPaymentAPI.Services.Implementations
             var entity = MapToEntity(dto);
             var nuevoId = await _customerRepository.CreateAsync(entity);
 
-            // TUTOR IA: Obtenemos el registro completo recién creado.
+            // Obtenemos el registro completo recién creado.
             // El operador '!' indica que confiamos en que el registro existe
             // (acabamos de crearlo, sería un error crítico si no existiera).
             var creado = await _customerRepository.GetByIdAsync(nuevoId);
@@ -105,7 +98,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: UpdateAsync — Actualizar un cliente existente
         // =====================================================================
-        // TUTOR IA: VALIDACIÓN DE NEGOCIO — Verificamos que el cliente exista
+        // VALIDACIÓN DE NEGOCIO — Verificamos que el cliente exista
         // antes de intentar actualizarlo. Esto evita que el SP haga un UPDATE
         // que no afecta ninguna fila sin que el usuario sepa por qué.
         //
@@ -115,14 +108,14 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         public async Task<bool> UpdateAsync(int id, CustomerRequestDto dto)
         {
-            // TUTOR IA: Primero verificamos existencia.
+            // Primero verificamos existencia.
             // Si el cliente no existe, retornamos false.
             // El Controller convertirá false en HTTP 404.
             var existente = await _customerRepository.GetByIdAsync(id);
             if (existente == null)
                 return false;
 
-            // TUTOR IA: Mapeamos el DTO a entidad y asignamos el Id de la URL.
+            // Mapeamos el DTO a entidad y asignamos el Id de la URL.
             // El Id viene de la ruta, no del body, por seguridad:
             // así evitamos que el cliente manipule el Id en el JSON.
             var entity = MapToEntity(dto);
@@ -134,7 +127,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODO: DeleteAsync — Desactivar un cliente (soft delete)
         // =====================================================================
-        // TUTOR IA: Verificamos existencia antes de intentar el soft delete.
+        // Verificamos existencia antes de intentar el soft delete.
         // El SP sp_Customer_Delete solo marca Activo = FALSE.
         // =====================================================================
         public async Task<bool> DeleteAsync(int id)
@@ -159,7 +152,7 @@ namespace CustomerPaymentAPI.Services.Implementations
         // =====================================================================
         // MÉTODOS PRIVADOS DE MAPEO
         // =====================================================================
-        // TUTOR IA: Estos métodos convierten entre las dos representaciones:
+        // Estos métodos convierten entre las dos representaciones:
         //
         // Entity → ResponseDto: Para ENVIAR datos al frontend.
         //   Solo incluye los campos que el frontend necesita ver.

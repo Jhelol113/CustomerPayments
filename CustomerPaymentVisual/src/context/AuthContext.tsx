@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setCurrentRole(null);
   }, []);
 
-  // TUTOR IA: Cierre automático de sesión por inactividad (5 minutos)
+  // Cierre automático de sesión por inactividad (5 minutos)
   const handleInactivityTimeout = useCallback(() => {
     if (isAuthenticated) {
       logout();
