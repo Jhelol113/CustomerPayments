@@ -1,0 +1,215 @@
+@startuml Diagrama_Secuencial_CRUD_Payment
+
+' ============================================================================
+' DIAGRAMA SECUENCIAL — CRUD COMPLETO DE PAYMENT + CAMBIO DE ESTADO
+' ============================================================================
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxMessageSize 200
+skinparam shadowing false
+
+title **Flujo Secuencial: CRUD de Payment y Cambio de Estado**
+
+actor "Usuario" as User #E8F5E9
+participant "React\n(PaymentsPage)" as FE #FCE4EC
+participant "Axios\n(paymentService)" as Axios #F3E5F5
+participant "JWT Middleware" as MW #FFF9C4
+participant "PaymentController" as PC #FCE4EC
+participant "PaymentService" as PS #F3E5F5
+participant "PaymentRepository" as PR #E0F7FA
+participant "CustomerRepository" as CustR #E0F7FA
+database "MySQL\n(Stored Procedures)" as DB #E3F2FD
+
+== 1. LISTAR PAGOS CON FILTRO OPCIONAL (GET /api/payments) ==
+
+User -> FE : Navega a /payments\n(opcionalmente selecciona un cliente)
+activate FE
+
+FE -> Axios : paymentService.getAll(customerId?)
+activate Axios
+
+Axios -> MW : GET /api/payments?customerId=3\nBearer <JWT>
+activate MW
+MW -> PC : Request autenticado
+deactivate MW
+activate PC
+
+PC -> PS : GetAllAsync(customerId: 3)
+activate PS
+
+PS -> PR : GetAllAsync(customerId: 3)
+activate PR
+
+PR -> DB : CALL sp_Payment_GetAll(p_CustomerId = 3)\n(JOIN con Customers para CustomerNombre)
+activate DB
+DB --> PR : Lista de Payments del cliente 3
+deactivate DB
+
+PR --> PS : IEnumerable<Payment>
+deactivate PR
+
+PS -> PS : Mapea Entity → PaymentResponseDto
+
+PS --> PC : IEnumerable<PaymentResponseDto>
+deactivate PS
+
+PC --> Axios : HTTP 200 OK\n[ { id, customerId, customerNombre, monto, ... } ]
+deactivate PC
+
+Axios --> FE : Payment[]
+deactivate Axios
+
+FE --> User : Renderiza tabla de pagos
+deactivate FE
+
+== 2. CREAR PAGO CON VALIDACIÓN CRUZADA (POST /api/payments) ==
+
+User -> FE : Click "Registrar Pago" → Selecciona cliente\n→ Ingresa monto y método → "Guardar"
+activate FE
+
+FE -> Axios : paymentService.create(PaymentRequest)
+activate Axios
+
+Axios -> MW : POST /api/payments\n{ customerId, monto, metodoPago }
+activate MW
+MW -> PC : Request autenticado
+deactivate MW
+activate PC
+
+PC -> PS : CreateAsync(PaymentRequestDto)
+activate PS
+
+PS -> CustR : GetByIdAsync(customerId)
+activate CustR
+CustR -> DB : CALL sp_Customer_GetById(p_Id)
+activate DB
+DB --> CustR : Customer | null
+deactivate DB
+CustR --> PS : Customer | null
+deactivate CustR
+
+alt Cliente NO existe
+    PS --> PC : throws ArgumentException\n"El cliente no existe"
+    PC --> Axios : HTTP 400 Bad Request\n{ mensaje: "El cliente no existe" }
+    Axios --> FE : Error 400
+    FE --> User : Toast error
+else Cliente existe ✓
+    PS -> PS : Mapea DTO → Entity Payment
+
+    PS -> PR : CreateAsync(payment)
+    activate PR
+    CR -> DB : CALL sp_Payment_Create(\np_CustomerId, p_Monto, p_MetodoPago)
+    activate DB
+    DB --> PR : LAST_INSERT_ID() → nuevo Id
+    deactivate DB
+    PR --> PS : int (nuevo Id)
+    deactivate PR
+
+    PS -> PR : GetByIdAsync(nuevoId)
+    activate PR
+    PR -> DB : CALL sp_Payment_GetById(p_Id)
+    activate DB
+    DB --> PR : Payment con CustomerNombre
+    deactivate DB
+    PR --> PS : Payment
+    deactivate PR
+
+    PS -> PS : Mapea Entity → PaymentResponseDto
+
+    PS --> PC : PaymentResponseDto
+    deactivate PS
+
+    PC --> Axios : HTTP 201 Created\n{ id, customerId, customerNombre, monto, estado, ... }
+    deactivate PC
+
+    Axios --> FE : Payment creado
+    deactivate Axios
+
+    FE --> User : Cierra modal\nToast: "Pago registrado"\nRecarga tabla
+    deactivate FE
+end
+
+== 3. CAMBIAR ESTADO DE PAGO (PATCH /api/payments/{id}/status) ==
+
+User -> FE : Click botón "Completar" ✓\nen un pago Pendiente
+activate FE
+
+FE -> Axios : paymentService.updateStatus(id, "Completado")
+activate Axios
+
+Axios -> MW : PATCH /api/payments/7/status\n{ estado: "Completado" }
+activate MW
+MW -> PC : Request autenticado
+deactivate MW
+activate PC
+
+PC -> PS : UpdateStatusAsync(7, "Completado")
+activate PS
+
+PS -> PS : Valida estado permitido\n["Pendiente", "Completado", "Fallido"]
+
+PS -> PR : UpdateStatusAsync(7, "Completado")
+activate PR
+
+PR -> DB : CALL sp_Payment_UpdateStatus(\np_Id = 7, p_Estado = "Completado")
+activate DB
+DB --> PR : ROW_COUNT() = 1
+deactivate DB
+
+PR --> PS : true
+deactivate PR
+
+PS --> PC : true
+deactivate PS
+
+PC --> Axios : HTTP 204 No Content
+deactivate PC
+
+Axios --> FE : Success
+deactivate Axios
+
+FE --> User : Toast: "Pago completado"\nRecarga tabla (badge cambia de color)
+deactivate FE
+
+== 4. ELIMINAR PAGO — HARD DELETE (DELETE /api/payments/{id}) ==
+
+User -> FE : Click "Eliminar" → Confirma
+activate FE
+
+FE -> Axios : paymentService.delete(id)
+activate Axios
+
+Axios -> MW : DELETE /api/payments/7
+activate MW
+MW -> PC : Request autenticado
+deactivate MW
+activate PC
+
+PC -> PS : DeleteAsync(7)
+activate PS
+
+PS -> PR : DeleteAsync(7)
+activate PR
+
+PR -> DB : CALL sp_Payment_Delete(p_Id = 7)\n(DELETE FROM Payments — Hard Delete)
+activate DB
+DB --> PR : ROW_COUNT() = 1
+deactivate DB
+
+PR --> PS : true
+deactivate PR
+
+PS --> PC : true
+deactivate PS
+
+PC --> Axios : HTTP 204 No Content
+deactivate PC
+
+Axios --> FE : Success
+deactivate Axios
+
+FE --> User : Toast: "Pago eliminado"\nRecarga tabla
+deactivate FE
+
+@enduml

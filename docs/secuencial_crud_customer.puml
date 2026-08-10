@@ -1,0 +1,214 @@
+@startuml Diagrama_Secuencial_CRUD_Customer
+
+' ============================================================================
+' DIAGRAMA SECUENCIAL — CRUD COMPLETO DE CUSTOMER
+' ============================================================================
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxMessageSize 200
+skinparam shadowing false
+
+title **Flujo Secuencial: CRUD de Customer (Crear, Listar, Editar, Eliminar)**
+
+actor "Usuario" as User #E8F5E9
+participant "React\n(CustomersPage)" as FE #FCE4EC
+participant "Axios\n(customerService)" as Axios #F3E5F5
+participant "JWT Middleware\n(Authorization)" as MW #FFF9C4
+participant "CustomerController" as CC #FCE4EC
+participant "CustomerService" as CS #F3E5F5
+participant "CustomerRepository" as CR #E0F7FA
+database "MySQL\n(Stored Procedures)" as DB #E3F2FD
+
+== 1. LISTAR CLIENTES (GET /api/customers) ==
+
+User -> FE : Navega a /customers
+activate FE
+
+FE -> Axios : customerService.getAll()
+activate Axios
+
+Axios -> MW : GET /api/customers\nHeader: Authorization: Bearer <JWT>
+activate MW
+
+MW -> MW : Valida token JWT\n(firma, expiración, issuer)
+
+MW -> CC : Request autenticado
+deactivate MW
+activate CC
+
+CC -> CS : GetAllAsync()
+activate CS
+
+CS -> CR : GetAllAsync()
+activate CR
+
+CR -> DB : CALL sp_Customer_GetAll()
+activate DB
+DB --> CR : Lista de Customers activos
+deactivate DB
+
+CR --> CS : IEnumerable<Customer>
+deactivate CR
+
+CS -> CS : Mapea Entity → CustomerResponseDto
+
+CS --> CC : IEnumerable<CustomerResponseDto>
+deactivate CS
+
+CC --> Axios : HTTP 200 OK\n[ { id, nombre, email, ... }, ... ]
+deactivate CC
+
+Axios --> FE : Customer[]
+deactivate Axios
+
+FE --> User : Renderiza tabla con datos
+deactivate FE
+
+== 2. CREAR CLIENTE (POST /api/customers) ==
+
+User -> FE : Click "Agregar" → Llena formulario → Click "Guardar"
+activate FE
+
+FE -> Axios : customerService.create(CustomerRequest)
+activate Axios
+
+Axios -> MW : POST /api/customers\n{ nombre, email, telefono, direccion }
+activate MW
+MW -> CC : Request autenticado
+deactivate MW
+activate CC
+
+CC -> CS : CreateAsync(CustomerRequestDto)
+activate CS
+
+CS -> CS : Mapea DTO → Entity Customer
+
+CS -> CR : CreateAsync(customer)
+activate CR
+
+CR -> DB : CALL sp_Customer_Create(\np_Nombre, p_Email, p_Telefono, p_Direccion)
+activate DB
+DB --> CR : LAST_INSERT_ID() → nuevo Id
+deactivate DB
+
+CR --> CS : int (nuevo Id)
+deactivate CR
+
+CS -> CR : GetByIdAsync(nuevoId)
+activate CR
+CR -> DB : CALL sp_Customer_GetById(p_Id)
+activate DB
+DB --> CR : Customer completo
+deactivate DB
+CR --> CS : Customer
+deactivate CR
+
+CS -> CS : Mapea Entity → CustomerResponseDto
+
+CS --> CC : CustomerResponseDto
+deactivate CS
+
+CC --> Axios : HTTP 201 Created\n{ id, nombre, email, fechaCreacion, ... }
+deactivate CC
+
+Axios --> FE : Customer creado
+deactivate Axios
+
+FE -> FE : Cierra modal\nToast: "Cliente creado"
+
+FE --> User : Actualiza tabla
+deactivate FE
+
+== 3. EDITAR CLIENTE (PUT /api/customers/{id}) ==
+
+User -> FE : Click "Editar" → Modifica datos → Click "Guardar"
+activate FE
+
+FE -> Axios : customerService.update(id, CustomerRequest)
+activate Axios
+
+Axios -> MW : PUT /api/customers/5\n{ nombre, email, telefono, direccion }
+activate MW
+MW -> CC : Request autenticado
+deactivate MW
+activate CC
+
+CC -> CS : UpdateAsync(5, CustomerRequestDto)
+activate CS
+
+CS -> CS : Mapea DTO → Entity Customer
+
+CS -> CR : UpdateAsync(customer)
+activate CR
+
+CR -> DB : CALL sp_Customer_Update(\np_Id, p_Nombre, p_Email, ...)
+activate DB
+DB --> CR : ROW_COUNT() = 1
+deactivate DB
+
+CR --> CS : true
+deactivate CR
+
+CS --> CC : true
+deactivate CS
+
+CC --> Axios : HTTP 204 No Content
+deactivate CC
+
+Axios --> FE : Success
+deactivate Axios
+
+FE --> User : Toast: "Cliente actualizado"\nRecarga tabla
+deactivate FE
+
+== 4. ELIMINAR CLIENTE (DELETE /api/customers/{id}) — Soft Delete ==
+
+User -> FE : Click "Eliminar" → Confirma en modal
+activate FE
+
+FE -> Axios : customerService.delete(id)
+activate Axios
+
+Axios -> MW : DELETE /api/customers/5
+activate MW
+MW -> CC : Request autenticado
+deactivate MW
+activate CC
+
+CC -> CS : DeleteAsync(5)
+activate CS
+
+CS -> CS : Verifica pagos Pendientes\n(Regla de Negocio)
+
+alt Tiene pagos Pendientes
+    CS --> CC : throws InvalidOperationException
+    CC --> Axios : HTTP 409 Conflict\n"No se puede eliminar,\ntiene pagos pendientes"
+    Axios --> FE : Error 409
+    FE --> User : Toast error:\n"Tiene pagos pendientes"
+else Sin pagos Pendientes
+    CS -> CR : DeleteAsync(5)
+    activate CR
+
+    CR -> DB : CALL sp_Customer_Delete(p_Id)\n(UPDATE SET Activo = FALSE)
+    activate DB
+    DB --> CR : ROW_COUNT() = 1
+    deactivate DB
+
+    CR --> CS : true
+    deactivate CR
+
+    CS --> CC : true
+    deactivate CS
+
+    CC --> Axios : HTTP 204 No Content
+    deactivate CC
+
+    Axios --> FE : Success
+    deactivate Axios
+
+    FE --> User : Toast: "Cliente eliminado"\nRecarga tabla
+    deactivate FE
+end
+
+@enduml

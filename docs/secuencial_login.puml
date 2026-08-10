@@ -1,0 +1,102 @@
+@startuml Diagrama_Secuencial_Login
+
+' ============================================================================
+' DIAGRAMA SECUENCIAL — FLUJO DE AUTENTICACIÓN (LOGIN)
+' ============================================================================
+
+skinparam sequenceArrowThickness 2
+skinparam roundcorner 10
+skinparam maxMessageSize 200
+skinparam sequenceParticipant underline
+skinparam shadowing false
+
+title **Flujo Secuencial: Autenticación de Usuario (Login)**
+
+actor "Usuario" as User #E8F5E9
+participant "React\n(LoginPage)" as FE #FCE4EC
+participant "Axios\n(authService)" as Axios #F3E5F5
+participant "AuthController\n[POST /api/auth/login]" as AC #FCE4EC
+participant "AuthService" as AS #F3E5F5
+participant "UserRepository" as UR #E0F7FA
+participant "JwtHelper" as JWT #FFF9C4
+database "MySQL\n(sp_User_GetByUsername)" as DB #E3F2FD
+
+== Inicio de Sesión ==
+
+User -> FE : Ingresa username y password
+activate FE
+
+FE -> Axios : authService.login(credentials)
+activate Axios
+
+Axios -> AC : POST /api/auth/login\n{ username, password }
+activate AC
+
+AC -> AS : LoginAsync(LoginRequestDto)
+activate AS
+
+AS -> UR : GetByUsernameAsync(username)
+activate UR
+
+UR -> DB : CALL sp_User_GetByUsername(p_Username)
+activate DB
+DB --> UR : User | null
+deactivate DB
+
+UR --> AS : User | null
+deactivate UR
+
+alt Usuario encontrado
+    AS -> AS : BCrypt.Verify(password, user.PasswordHash)
+
+    alt Contraseña válida
+        AS -> JWT : GenerateToken(user)
+        activate JWT
+        JWT --> AS : JWT Token (string)
+        deactivate JWT
+
+        AS --> AC : LoginResponseDto\n{ token, username, rol, expiracion }
+        deactivate AS
+
+        AC --> Axios : HTTP 200 OK\n{ token, username, rol, expiracion }
+        deactivate AC
+
+        Axios -> Axios : localStorage.setItem("token", token)\nlocalStorage.setItem("username")\nlocalStorage.setItem("rol")
+
+        Axios --> FE : LoginResponse
+        deactivate Axios
+
+        FE -> FE : AuthContext.login()\nsetIsAuthenticated(true)
+
+        FE --> User : Redirige a /dashboard
+        deactivate FE
+
+    else Contraseña inválida
+        AS --> AC : null
+        deactivate AS
+
+        AC --> Axios : HTTP 401 Unauthorized\n{ mensaje: "Credenciales inválidas" }
+        deactivate AC
+
+        Axios --> FE : Error 401
+        deactivate Axios
+
+        FE --> User : Muestra mensaje de error
+        deactivate FE
+    end
+
+else Usuario no encontrado
+    AS --> AC : null
+    deactivate AS
+
+    AC --> Axios : HTTP 401 Unauthorized
+    deactivate AC
+
+    Axios --> FE : Error 401
+    deactivate Axios
+
+    FE --> User : Muestra mensaje de error
+    deactivate FE
+end
+
+@enduml
